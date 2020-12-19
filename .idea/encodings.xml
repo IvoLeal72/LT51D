@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/src/aulas/aula_19_10/Person.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/src/gui/demos/layout/BorderLayoutDemo.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tests/testesAcademicos/teste12_11_2019/Group.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tests/testesAcademicos/teste12_11_2019/OneRegister.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tests/testesAcademicos/teste12_11_2019/Pet.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tests/trab1/grupo3/TestIndexAnswer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tests/trab1/grupo3/TestSelectQuestion.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tests/trab1/grupo3/TestSimpleQuestion.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tests/trab1/grupo3/TestYesNoAnswer.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tests/trab1/grupo4/TestCityTour.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tests/trab1/grupo4/TestHotelRoom.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tests/trab1/grupo4/TestProgram.java" charset="UTF-8" />
+  </component>
+</project>
