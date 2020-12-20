@@ -49,6 +49,7 @@ public class Grupo1 {
 
             int number=Integer.parseInt(str.substring(firstIdx+1, secondIdx));
             String name=str.substring(secondIdx+1);
+
             action.accept(number, name);
         }
         );
