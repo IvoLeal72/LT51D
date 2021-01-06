@@ -90,7 +90,7 @@ public class Contact implements Comparable<Contact> {
      */
     @Override
     public int hashCode() {
-        return name.hashCode()+ birthDate.hashCode();
+        return name.toLowerCase().hashCode()+ birthDate.hashCode();
     }
 }
 

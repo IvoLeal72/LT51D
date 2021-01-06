@@ -6,12 +6,13 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * M´todos utilitários
+ * Métodos utilitários
  */
 public class Utils {
 
     /**
-     * todo COMENTAR
+     * Procura o item com a chave passada em key, no mapa passado em m,se existir corre a função passada em add,
+     * se não existir adiciona o valor passado com a chave
      * @param m
      * @param key
      * @param value
@@ -40,8 +41,7 @@ public class Utils {
      * @return
      */
     public static < K, V >  void foreachV(Map<K, ? extends Collection<V> > m, Consumer<V> action) {
-        //todo;
-        throw new UnsupportedOperationException("Utils::foreachV not implements");
+        m.forEach((k, vs)-> vs.forEach(action));
     }
 
     /**
