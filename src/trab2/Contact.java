@@ -1,19 +1,18 @@
 package trab2;
 
 import java.util.*;
-import java.util.Date;
 
 /**
  * Contacto. Um contacto tem nome, data de nascimento e conjunto de números de telefone.
  */
 public class Contact implements Comparable<Contact> {
-    private final java.util.Date birthDate;
+    private final Date birthDate;
     private final String name;
     // Os número de telefones devem ser unicos e devem
     // ser obtidos pela ordem que foram adicionados.
-    private Set< String > telephones = new LinkedHashSet< String >();
+    private final Set< String > telephones = new LinkedHashSet<>();
 
-    public Contact( String n, java.util.Date d ) {
+    public Contact( String n, Date d ) {
         this.name = n;
         this.birthDate = d;
     }
@@ -45,17 +44,13 @@ public class Contact implements Comparable<Contact> {
     }
 
     /**
-     * Retorna o número de anos do contacto.
-     * @return
+     * Retorna o número de anos do contacto
      */
     public int getAge() {
-        Calendar today = Calendar.getInstance();
-        Calendar bd = Calendar.getInstance();
-        bd.setTime(birthDate);
-        int age = today.get(Calendar.YEAR)-bd.get(Calendar.YEAR);
-        if(today.get(Calendar.MONTH)>bd.get(Calendar.MONTH)) return age;
-        if(today.get(Calendar.MONTH) == bd.get(Calendar.MONTH) && today.get(Calendar.DAY_OF_MONTH) > bd.get(Calendar.DAY_OF_MONTH)) return age;
-        return age-1;
+        Date today = new Date();
+        int age= today.getYear()-birthDate.getYear();
+        if(today.getMonth()< birthDate.getMonth() || (today.getMonth()==birthDate.getMonth() && today.getDay()< birthDate.getDay())) age--;
+        return age;
     }
 
     /**
@@ -66,8 +61,12 @@ public class Contact implements Comparable<Contact> {
      */
     @Override
     public boolean equals( Object o ) {
-        // todo
-        throw new UnsupportedOperationException("Contact::equals not implements");
+        if(o==null) return false;
+        if(o instanceof Contact) {
+            Contact other = (Contact) o;
+            return name.equalsIgnoreCase((other).getName()) && birthDate.equals((other).getBirthDate());
+        }
+        return false;
     }
 
     /**
@@ -79,8 +78,9 @@ public class Contact implements Comparable<Contact> {
      */
     @Override
     public int compareTo( Contact c ) {
-        // todo
-        throw new UnsupportedOperationException("Contact::compareTo not implements");
+        int cmp= birthDate.compareTo(c.getBirthDate());
+        if(cmp==0) cmp=name.compareToIgnoreCase(c.getName());
+        return cmp;
     }
 
     /**
@@ -90,11 +90,7 @@ public class Contact implements Comparable<Contact> {
      */
     @Override
     public int hashCode() {
-        // Ter em atenção que o método equals e o método hashCode têm que ser consistentes.
-        // O método equals() é consistente com o método hashCode(), se e só se, dois objectos
-        // iguais tiverem o mesmo valor de hash.
-        //todo
-        throw new UnsupportedOperationException("Contact::hashCode not implements");
+        return name.hashCode()+ birthDate.hashCode();
     }
 }
 

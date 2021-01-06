@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-public class FirstWindow extends JFrame implements ActionListener {
+public class FirstWindow extends JFrame{
     public static final int WIDTH=500;
     public static final int HEIGHT=600;
     private final JTextArea main;
@@ -43,7 +43,7 @@ public class FirstWindow extends JFrame implements ActionListener {
         info.setEditable(false);
         south.add(info, BorderLayout.CENTER);
         JButton button= new JButton("list");
-        button.addActionListener(this);
+        button.addActionListener(this::actionPerformed);
         south.add(button, BorderLayout.EAST);
 
         getContentPane().add(south, BorderLayout.SOUTH);
