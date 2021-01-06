@@ -11,7 +11,7 @@ public class Contact implements Comparable<Contact> {
     private final String name;
     // Os número de telefones devem ser unicos e devem
     // ser obtidos pela ordem que foram adicionados.
-    private Set< String > telephones; // todo - INSTANCIAR UM SET
+    private Set< String > telephones = new LinkedHashSet< String >();
 
     public Contact( String n, java.util.Date d ) {
         this.name = n;
@@ -49,8 +49,13 @@ public class Contact implements Comparable<Contact> {
      * @return
      */
     public int getAge() {
-        //todo
-        throw new UnsupportedOperationException("Contact::getAge not implements");
+        Calendar today = Calendar.getInstance();
+        Calendar bd = Calendar.getInstance();
+        bd.setTime(birthDate);
+        int age = today.get(Calendar.YEAR)-bd.get(Calendar.YEAR);
+        if(today.get(Calendar.MONTH)>bd.get(Calendar.MONTH)) return age;
+        if(today.get(Calendar.MONTH) == bd.get(Calendar.MONTH) && today.get(Calendar.DAY_OF_MONTH) > bd.get(Calendar.DAY_OF_MONTH)) return age;
+        return age-1;
     }
 
     /**
