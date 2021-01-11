@@ -3,7 +3,7 @@ package trab2;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.Date;
+import trab2.Date;
 
 /**
  * Agenda.
@@ -19,7 +19,7 @@ public class NoteBook {
     // Contentor associativo ordenado por datas de nascimento de contactos cujo
     // aniversário é no mesmo dia/mes.
     // A chave data de nascimento o valor associado são os contactos que fazem anos no mesmo número de telefone.
-    private SortedMap<java.util.Date, SortedSet<Contact> > birthdays; // todo - Instanciar
+    private SortedMap<Date, SortedSet<Contact> > birthdays; // todo - Instanciar
 
     /**
      * Adiciona um contacto ao contentor associativo de contactos contact.

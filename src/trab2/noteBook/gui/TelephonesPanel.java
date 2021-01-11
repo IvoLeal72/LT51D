@@ -1,6 +1,6 @@
 package trab2.noteBook.gui;
 
-import trabs.trab2.noteBook2.gui.DocumentNumber;
+import trab2.noteBook.gui.DocumentNumber;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

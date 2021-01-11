@@ -52,8 +52,17 @@ public class Utils {
      * @return
      */
     public static <K,V> Collection< K > greater( Map<K,V> m, Comparator<V> cmp  ) {
-        //todo
-        throw new UnsupportedOperationException("Utils::greater not implements");
+        var ref = new Object() {
+            V temp = m.entrySet().iterator().next().getValue();
+        };
+        m.forEach((k, v) -> {
+            if(cmp.compare(v, ref.temp)>0) ref.temp =v;
+        });
+        Collection<K> collect=new ArrayList<>();
+        m.forEach((k,v)->{
+            if(v.equals(ref.temp)) collect.add(k);
+        });
+        return collect;
     }
 
 }
