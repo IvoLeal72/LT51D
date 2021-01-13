@@ -11,8 +11,8 @@ import java.util.function.Supplier;
 public class Utils {
 
     /**
-     * Procura o item com a chave passada em key, no mapa passado em m,se existir corre a função passada em add,
-     * se não existir adiciona o valor passado com a chave
+     * Procura o item com a chave retornada pela função key, no mapa passado em m,se existir corre a função passada em add,
+     * se não existir adiciona uma entrada com o valor retornado pela função value.
      * @param m
      * @param key
      * @param value
@@ -21,9 +21,7 @@ public class Utils {
      * @param <V>
      * @return
      */
-    public static <K, V> boolean actualize(Map<K, V> m,
-                                    Supplier<K> key, Supplier<V> value,
-                                    Function<V, Boolean> add) {
+    public static <K, V> boolean actualize(Map<K, V> m, Supplier<K> key, Supplier<V> value, Function<V, Boolean> add) {
         K k = key.get( );
         V c = m.get( k );
         if (c != null)
@@ -52,11 +50,12 @@ public class Utils {
      * @return
      */
     public static <K,V> Collection< K > greater( Map<K,V> m, Comparator<V> cmp  ) {
+        if(m.isEmpty()) return Collections.emptyList();
         var ref = new Object() {
             V temp = m.entrySet().iterator().next().getValue();
         };
         m.forEach((k, v) -> {
-            if(cmp.compare(v, ref.temp)>0) ref.temp =v;
+            if(cmp.compare(v, ref.temp)>0) ref.temp=v;
         });
         Collection<K> collect=new ArrayList<>();
         m.forEach((k,v)->{

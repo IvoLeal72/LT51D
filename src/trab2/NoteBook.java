@@ -15,11 +15,11 @@ public class NoteBook {
     private Map< String, Contact> contacts = new TreeMap<>();
     // Contentor associativo de número de telefones.
     // A chave é o número de telefone o valor associado são os contactos que têm o mesmo número de telefone.
-    private Map< String, SortedSet< Contact > > telephones ; //todo - Instanciar
+    private Map< String, SortedSet< Contact > > telephones = new HashMap<>();
     // Contentor associativo ordenado por datas de nascimento de contactos cujo
     // aniversário é no mesmo dia/mes.
     // A chave data de nascimento o valor associado são os contactos que fazem anos no mesmo número de telefone.
-    private SortedMap<Date, SortedSet<Contact> > birthdays; // todo - Instanciar
+    private SortedMap<Date, SortedSet<Contact> > birthdays = new TreeMap<>();
 
     /**
      * Adiciona um contacto ao contentor associativo de contactos contact.
@@ -35,8 +35,24 @@ public class NoteBook {
      * @return true caso tenha adicionado ou atualizado as estruturas.
      */
     public boolean add( Contact contact ) {
-        // todo
-        throw new UnsupportedOperationException("NoteBook::add not implements");
+        boolean updated=Utils.actualize(contacts, contact::getName, ()->contact, (contact1 -> contact1.join(contact)));
+        if(updated){
+            contact.getTelephones().forEach((number)-> {
+                Utils.actualize(telephones, () -> number, ()->{
+                    SortedSet<Contact> list=new TreeSet<>();
+                    list.add(contact);
+                    return list;
+                }, (contacts1 -> contacts1.add(contact)));
+            });
+
+            Utils.actualize(birthdays, ()-> new Date(contact.getBirthDate().getDay(), contact.getBirthDate().getMonth(), 0), ()->{
+                    SortedSet<Contact> list=new TreeSet<>();
+                    list.add(contact);
+                    return list;
+                }, (contacts1 -> contacts1.add(contact))
+            );
+        }
+        return updated;
     }
 
     /**
@@ -46,8 +62,7 @@ public class NoteBook {
      * @param nb agenda
      */
     public void add( NoteBook nb ) {
-        // todo
-        throw new UnsupportedOperationException("NoteBook::add not implements");
+        nb.contacts.forEach((k, v)->this.add(v));
     }
 
     /**
@@ -56,8 +71,19 @@ public class NoteBook {
      * @param name nome do contacto
      */
     public boolean remove( String name ) {
-        // todo
-        throw new UnsupportedOperationException("NoteBook::remove not implements");
+        Contact toDelete=contacts.remove(name);
+        if(toDelete==null) return false;
+        toDelete.getTelephones().forEach((number)->{
+            SortedSet<Contact> list=telephones.get(number);
+            if(list!=null){
+                list.remove(toDelete);
+            }
+        });
+        SortedSet<Contact> list=birthdays.get(new Date(toDelete.getBirthDate().getDay(), toDelete.getBirthDate().getMonth(), 0));
+        if(list!=null){
+            list.remove(toDelete);
+        }
+        return true;
     }
 
     /**
