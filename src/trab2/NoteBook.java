@@ -1,8 +1,9 @@
 package trab2;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+
+import jdk.jshell.execution.Util;
 import trab2.Date;
 
 /**
@@ -104,8 +105,7 @@ public class NoteBook {
      * @return o contacto ou null caso não exista.
      */
     public Contact getContact( String name ) {
-        // todo
-        throw new UnsupportedOperationException("NoteBook::getContact not implements");
+        return contacts.get(name);
     }
 
     /**
@@ -132,8 +132,7 @@ public class NoteBook {
      * @return sequencia de contactos.
      */
     public Iterable<Contact> getContactsOf( String phone ) {
-        // todo
-        throw new UnsupportedOperationException("NoteBook::getContactsOf not implements");
+        return telephones.get(phone);
    }
 
     /**
@@ -142,8 +141,13 @@ public class NoteBook {
      * @return sequencia de contactos ordenada por data.
      */
     public Iterable<Contact> getBirthdays( int month ) {
-        // todo - USAR O MÉTODO Utils.foreachV
-        throw new UnsupportedOperationException("NoteBook::getBirthdays not implements");
+        ArrayList<Contact> list=new ArrayList<>();
+        Utils.foreachV(birthdays, (contact -> {
+            if(contact.getBirthDate().getMonth()==month){
+                list.add(contact);
+            }
+        }));
+        return list;
     }
 
 
@@ -156,7 +160,32 @@ public class NoteBook {
      * @throws IOException
      */
     public void read( File file ) throws IOException {
-        throw new UnsupportedOperationException("NoteBook::read not implements");
+        try(BufferedReader rd=new BufferedReader(new FileReader(file))){
+            String line=rd.readLine();
+            while(line!=null){
+                Contact contact;
+                Date birthDate=new Date(line.substring(0, 11));
+                int idx=line.indexOf('[');
+                if(idx<0){
+                    contact=new Contact(line.substring(11), birthDate);
+                }
+                else{
+                    contact=new Contact(line.substring(11, idx-1), birthDate);
+                    Collection<String> phonesList=new ArrayList<>();
+                    int secIdx=line.indexOf(' ', idx);
+                    while(secIdx>0){
+                        phonesList.add(line.substring(idx+1, secIdx-1));
+                        idx=secIdx;
+                        secIdx=line.indexOf(' ', idx+1);
+                    }
+                    secIdx=line.indexOf(']');
+                    phonesList.add(line.substring(idx+1, secIdx));
+                    contact.addTelephones(phonesList);
+                }
+                this.add(contact);
+                line=rd.readLine();
+            }
+        }
     }
 
     /**
@@ -165,7 +194,9 @@ public class NoteBook {
      * @throws IOException
      */
     public void write( File file ) throws  IOException {
-        throw new UnsupportedOperationException("NoteBook::write not implements");
+        try(PrintWriter out=new PrintWriter(new FileWriter(file))){
+            contacts.forEach((k,v)->out.println(v));
+        }
     }
 
     /*********************************************************************
@@ -173,6 +204,20 @@ public class NoteBook {
      * telefones com maior número de contactos ou as datas que existem mais
      * mais aniversários
      */
-    // todo - USAR O MÉTODO Utils.greater
 
+    public Collection<String> mostContactsByPhone(){
+        return Utils.greater(telephones, (s1, s2)->s1.size()-s2.size());
+    }
+
+    public Collection<Date> mostBirthdays(){
+        return Utils.greater(birthdays, ((s1,s2)->s1.size()-s2.size()));
+    }
+
+    public Collection<Contact> mostNumbers(){
+        Collection<String> list= Utils.greater(contacts, (c1,c2)->c1.getTelephones().size()-c2.getTelephones().size());
+
+        Collection<Contact> finalList = new ArrayList<>();
+        list.forEach((name)->finalList.add(contacts.get(name)));
+        return finalList;
+    }
 }
