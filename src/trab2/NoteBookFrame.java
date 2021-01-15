@@ -45,6 +45,12 @@ public class NoteBookFrame extends JFrame {
             new ItensMenu("this month birthdays", this::listMonthBirthdays)
     };
 
+    public ItensMenu[] withMoreMenus = {
+            new ItensMenu("contacts with more phones", this::listMoreNumbers),
+            new ItensMenu("phones with more contacts", this::listPhonesWithMoreContacts),
+            new ItensMenu("dates with more birthdays", this::listDatesWithMoreBirthdays)
+    };
+
     public NoteBookFrame(){
         super("NoteBook");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -71,6 +77,7 @@ public class NoteBookFrame extends JFrame {
         menuBar.add(createJMenu("File", fileMenus));
         menuBar.add(createJMenu("Edit", editMenus));
         menuBar.add(createJMenu("List", listMenus));
+        menuBar.add(createJMenu("With more", withMoreMenus));
         setJMenuBar( menuBar );
         pack();
     }
@@ -218,7 +225,14 @@ public class NoteBookFrame extends JFrame {
      * @param actionEvent
      */
     private void listMonthBirthdays( ActionEvent actionEvent ) {
-        // todo
+        String month=JOptionPane.showInputDialog(this, "Search By Birth Month", "Month", JOptionPane.QUESTION_MESSAGE);
+        try{
+            int mon=Integer.parseInt(month);
+            list("Contacts born in month "+mon, noteBook.getBirthdays(mon),  (contact -> contact.getName()+" "+contact.getAge()));
+        }
+        catch (NumberFormatException e){
+            JOptionPane.showMessageDialog(this, "Wrong Month Format");
+        }
      }
 
     /**
@@ -228,7 +242,8 @@ public class NoteBookFrame extends JFrame {
      * @param actionEvent
      */
     private void listNamesWithThisPhone(ActionEvent actionEvent) {
-        // todo
+        String number=JOptionPane.showInputDialog(this, "Search By Phone", "Phone", JOptionPane.QUESTION_MESSAGE);
+        list("Contacts with phone "+number, noteBook.getContactsOf(number), Contact::getName);
     }
 
     /**
@@ -236,14 +251,26 @@ public class NoteBookFrame extends JFrame {
      * @param actionEvent
      */
     private void listTodayBirthdays(ActionEvent actionEvent) {
-        //todo
+        Date today=new Date();
+        list("Contacts born in "+today.getDay()+"/"+today.getMonth(), noteBook.getBirthdays(today.getDay(), today.getMonth()), (contact -> contact.getName()+" "+contact.getAge()));
     }
 
     /***************************************************
      *  Métodos associados aos itens do menu "With more"
      *
      ***************************************************/
-     //todo
+
+    private void listMoreNumbers(ActionEvent actionEvent) {
+        list("Contact with most phone numbers", noteBook.mostNumbers(), (str)->str);
+    }
+
+    private void listPhonesWithMoreContacts(ActionEvent actionEvent) {
+        list("Numbers with more contacts", noteBook.mostContactsByPhone(), (str)->str);
+    }
+
+    private void listDatesWithMoreBirthdays(ActionEvent actionEvent) {
+        list("Date with more birthdays", noteBook.mostBirthdays(), Date::toString);
+    }
 
     public static void main(String[] args) {
         new NoteBookFrame().setVisible( true );

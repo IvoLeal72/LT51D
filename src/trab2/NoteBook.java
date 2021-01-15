@@ -3,9 +3,6 @@ package trab2;
 import java.io.*;
 import java.util.*;
 
-import jdk.jshell.execution.Util;
-import trab2.Date;
-
 /**
  * Agenda.
  */
@@ -13,14 +10,18 @@ public class NoteBook {
     // Contentor associativo, associa o nome ao contacto.
     // A chave é o nome do contacto.
     // Não podem existir dois contactos com o mesmo nome.
-    private Map< String, Contact> contacts = new TreeMap<>();
+    private final Map< String, Contact> contacts = new TreeMap<>();
     // Contentor associativo de número de telefones.
     // A chave é o número de telefone o valor associado são os contactos que têm o mesmo número de telefone.
-    private Map< String, SortedSet< Contact > > telephones = new TreeMap<>();
+    private final Map< String, SortedSet< Contact > > telephones = new TreeMap<>();
     // Contentor associativo ordenado por datas de nascimento de contactos cujo
     // aniversário é no mesmo dia/mes.
     // A chave data de nascimento o valor associado são os contactos que fazem anos no mesmo número de telefone.
-    private SortedMap<Date, SortedSet<Contact> > birthdays = new TreeMap<>();
+    private final SortedMap<Date, SortedSet<Contact> > birthdays = new TreeMap<>((d1,d2)->{
+       int res=d1.getMonth()-d2.getMonth();
+       if(res!=0) return res;
+       return d1.getDay()-d2.getDay();
+    });
 
     /**
      * Adiciona um contacto ao contentor associativo de contactos contact.
@@ -38,15 +39,13 @@ public class NoteBook {
     public boolean add( Contact contact ) {
         boolean updated=Utils.actualize(contacts, contact::getName, ()->contact, (contact1 -> contact1.join(contact)));
         if(updated){
-            contact.getTelephones().forEach((number)-> {
-                Utils.actualize(telephones, () -> number, ()->{
-                    SortedSet<Contact> list=new TreeSet<>();
-                    list.add(contact);
-                    return list;
-                }, (contacts1 -> contacts1.add(contact)));
-            });
+            contact.getTelephones().forEach((number)-> Utils.actualize(telephones, () -> number, ()->{
+                SortedSet<Contact> list=new TreeSet<>();
+                list.add(contact);
+                return list;
+            }, (contacts1 -> contacts1.add(contact))));
 
-            Utils.actualize(birthdays, ()-> new Date(contact.getBirthDate().getDay(), contact.getBirthDate().getMonth(), 0), ()->{
+            Utils.actualize(birthdays, contact::getBirthDate, ()->{
                     SortedSet<Contact> list=new TreeSet<>();
                     list.add(contact);
                     return list;
@@ -63,7 +62,7 @@ public class NoteBook {
      * @param nb agenda
      */
     public void add( NoteBook nb ) {
-        nb.contacts.forEach((k, v)->this.add(v));
+        nb.getAllContacts().forEach(this::add);
     }
 
     /**
@@ -76,14 +75,14 @@ public class NoteBook {
         if(toDelete==null) return false;
         toDelete.getTelephones().forEach((number)->{
             SortedSet<Contact> list=telephones.get(number);
-            if(list!=null){
-                list.remove(toDelete);
+            list.remove(toDelete);
+            if(list.isEmpty()){
+                telephones.remove(number);
             }
         });
-        SortedSet<Contact> list=birthdays.get(new Date(toDelete.getBirthDate().getDay(), toDelete.getBirthDate().getMonth(), 0));
-        if(list!=null){
-            list.remove(toDelete);
-        }
+        SortedSet<Contact> list=birthdays.get(toDelete.getBirthDate());
+        list.remove(toDelete);
+        if(list.isEmpty()) birthdays.remove(toDelete.getBirthDate());
         return true;
     }
 
@@ -142,11 +141,8 @@ public class NoteBook {
      */
     public Iterable<Contact> getBirthdays( int month ) {
         ArrayList<Contact> list=new ArrayList<>();
-        Utils.foreachV(birthdays, (contact -> {
-            if(contact.getBirthDate().getMonth()==month){
-                list.add(contact);
-            }
-        }));
+        Map<Date, SortedSet<Contact>> subMap=birthdays.subMap(new Date(1, month, 0), new Date(1, month==12?1:month+1, 0));
+        Utils.foreachV(subMap, (list::add));
         return list;
     }
 
@@ -171,16 +167,8 @@ public class NoteBook {
                 }
                 else{
                     contact=new Contact(line.substring(11, idx-1).trim(), birthDate);
-                    Collection<String> phonesList=new ArrayList<>();
-                    int secIdx=line.indexOf(' ', idx);
-                    while(secIdx>0){
-                        phonesList.add(line.substring(idx+1, secIdx-1));
-                        idx=secIdx;
-                        secIdx=line.indexOf(' ', idx+1);
-                    }
-                    secIdx=line.indexOf(']');
-                    phonesList.add(line.substring(idx+1, secIdx));
-                    contact.addTelephones(phonesList);
+                    int secIdx=line.indexOf(']');
+                    contact.addTelephones(Arrays.asList(line.substring(idx+1, secIdx).split(", ")));
                 }
                 this.add(contact);
                 line=rd.readLine();
@@ -213,11 +201,17 @@ public class NoteBook {
         return Utils.greater(birthdays, ((s1,s2)->s1.size()-s2.size()));
     }
 
-    public Collection<Contact> mostNumbers(){
-        Collection<String> list= Utils.greater(contacts, (c1,c2)->c1.getTelephones().size()-c2.getTelephones().size());
+    public Collection<String> mostNumbers(){
+        return Utils.greater(contacts, (c1,c2)->c1.getTelephones().size()-c2.getTelephones().size());
+    }
 
-        Collection<Contact> finalList = new ArrayList<>();
-        list.forEach((name)->finalList.add(contacts.get(name)));
-        return finalList;
+    public static void merge(File dir, String fileNameOut) throws IOException{
+        File[] files=dir.listFiles();
+        NoteBook nb=new NoteBook();
+        if(files!=null)
+            for(File file:files) {
+                nb.read(file);
+            }
+        nb.write(new File(fileNameOut));
     }
 }
