@@ -1,6 +1,8 @@
 package trab2;
 
 import trab2.noteBook.gui.ContactDialog;
+import trab2.noteBook.gui.DatePanel;
+import trab2.noteBook.gui.TelephonesPanel;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -30,6 +32,19 @@ public class NoteBookFrame extends JFrame {
             new ItensMenu("save", this::save),
             new ItensMenu("exit", this::exit)};
 
+    public ItensMenu[] editMenus = {
+            new ItensMenu("add contact", this::addContact),
+            new ItensMenu("add phone", this::addPhone),
+            new ItensMenu("delete contact", this::removeContact)
+    };
+
+    public ItensMenu[] listMenus = {
+            new ItensMenu("all contacts", this::listAll),
+            new ItensMenu("names with this phone", this::listNamesWithThisPhone),
+            new ItensMenu("today birthdays", this::listTodayBirthdays),
+            new ItensMenu("this month birthdays", this::listMonthBirthdays)
+    };
+
     public NoteBookFrame(){
         super("NoteBook");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -54,6 +69,8 @@ public class NoteBookFrame extends JFrame {
         // Adicionar os menus
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(createJMenu("File", fileMenus));
+        menuBar.add(createJMenu("Edit", editMenus));
+        menuBar.add(createJMenu("List", listMenus));
         setJMenuBar( menuBar );
         pack();
     }
@@ -66,10 +83,10 @@ public class NoteBookFrame extends JFrame {
      */
     protected static JMenu createJMenu( String name, ItensMenu[] itens ){
         JMenu menu = new JMenu( name );
-        for ( int i= 0; i < itens.length; ++i)  {
-            JMenuItem mi = new JMenuItem( itens[i].getKey() );
-            mi.addActionListener( itens[i].getValue() );
-            menu.add( mi );
+        for (ItensMenu iten : itens) {
+            JMenuItem mi = new JMenuItem(iten.getKey());
+            mi.addActionListener(iten.getValue());
+            menu.add(mi);
         }
         return menu;
     }
@@ -126,6 +143,7 @@ public class NoteBookFrame extends JFrame {
             if ( !noteBook.remove( name ) ) {
                 JOptionPane.showMessageDialog(this, "Contact not exist", "Delete",JOptionPane.ERROR_MESSAGE);
             };
+            list("Contact List", noteBook.getAllContacts(), Contact::toString );
         }
     }
 
@@ -170,7 +188,14 @@ public class NoteBookFrame extends JFrame {
     }
 
     private void load(ActionEvent actionEvent) {
-        //todo
+        fileChooser.setCurrentDirectory(new File("."));
+        if ( JFileChooser.APPROVE_OPTION == fileChooser.showOpenDialog(this) )
+            try {
+                noteBook.read(fileChooser.getSelectedFile());
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error file: " + e.getMessage());
+            }
+        list("Contact List", noteBook.getAllContacts(), Contact::toString );
     }
 
     /***************************************************
@@ -193,7 +218,7 @@ public class NoteBookFrame extends JFrame {
      * @param actionEvent
      */
     private void listMonthBirthdays( ActionEvent actionEvent ) {
-        //todo
+        // todo
      }
 
     /**

@@ -16,7 +16,7 @@ public class NoteBook {
     private Map< String, Contact> contacts = new TreeMap<>();
     // Contentor associativo de número de telefones.
     // A chave é o número de telefone o valor associado são os contactos que têm o mesmo número de telefone.
-    private Map< String, SortedSet< Contact > > telephones = new HashMap<>();
+    private Map< String, SortedSet< Contact > > telephones = new TreeMap<>();
     // Contentor associativo ordenado por datas de nascimento de contactos cujo
     // aniversário é no mesmo dia/mes.
     // A chave data de nascimento o valor associado são os contactos que fazem anos no mesmo número de telefone.
@@ -164,13 +164,13 @@ public class NoteBook {
             String line=rd.readLine();
             while(line!=null){
                 Contact contact;
-                Date birthDate=new Date(line.substring(0, 11));
+                Date birthDate=new Date(line.substring(0, 10));
                 int idx=line.indexOf('[');
                 if(idx<0){
-                    contact=new Contact(line.substring(11), birthDate);
+                    contact=new Contact(line.substring(11).trim(), birthDate);
                 }
                 else{
-                    contact=new Contact(line.substring(11, idx-1), birthDate);
+                    contact=new Contact(line.substring(11, idx-1).trim(), birthDate);
                     Collection<String> phonesList=new ArrayList<>();
                     int secIdx=line.indexOf(' ', idx);
                     while(secIdx>0){
