@@ -261,7 +261,7 @@ public class NoteBookFrame extends JFrame {
      ***************************************************/
 
     private void listMoreNumbers(ActionEvent actionEvent) {
-        list("Contact with most phone numbers", noteBook.mostNumbers(), (str)->str);
+        list("Contacts with most phone numbers", noteBook.mostNumbers(), (str)->str);
     }
 
     private void listPhonesWithMoreContacts(ActionEvent actionEvent) {
@@ -269,7 +269,7 @@ public class NoteBookFrame extends JFrame {
     }
 
     private void listDatesWithMoreBirthdays(ActionEvent actionEvent) {
-        list("Date with more birthdays", noteBook.mostBirthdays(), Date::toString);
+        list("Dates with more birthdays", noteBook.mostBirthdays(), Date::toString);
     }
 
     public static void main(String[] args) {
