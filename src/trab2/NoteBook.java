@@ -141,7 +141,13 @@ public class NoteBook {
      */
     public Iterable<Contact> getBirthdays( int month ) {
         ArrayList<Contact> list=new ArrayList<>();
-        Map<Date, SortedSet<Contact>> subMap=birthdays.subMap(new Date(1, month, 0), new Date(1, month==12?1:month+1, 0));
+        Map<Date, SortedSet<Contact>> subMap;
+        if(month==12){
+            subMap=birthdays.tailMap(new Date(1, 12, 0));
+        }
+        else{
+            subMap=birthdays.subMap(new Date(1, month, 0), new Date(1, month + 1, 0));
+        }
         Utils.foreachV(subMap, (list::add));
         return list;
     }
@@ -183,7 +189,7 @@ public class NoteBook {
      */
     public void write( File file ) throws  IOException {
         try(PrintWriter out=new PrintWriter(new FileWriter(file))){
-            contacts.forEach((k,v)->out.println(v));
+            contacts.values().forEach(out::println);
         }
     }
 
