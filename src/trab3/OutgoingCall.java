@@ -12,4 +12,11 @@ public class OutgoingCall extends Call{
         return false;
     }
 
+    public IncomingCall toIncoming(){
+        return new IncomingCall(getReg(), getData(), getTime(), getDuration());
+    }
+
+    public String toString(){
+        return "Outgoing call: "+super.toString();
+    }
 }

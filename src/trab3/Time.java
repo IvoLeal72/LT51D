@@ -32,4 +32,8 @@ public class Time implements Comparable<Time>{
     public int compareTo(Time other) {
         return this.toSeconds()-other.toSeconds();
     }
+
+    public String toString(){
+        return String.format("%02d:%02d:%02d", hour, min, sec);
+    }
 }

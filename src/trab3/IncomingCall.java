@@ -12,4 +12,7 @@ public class IncomingCall extends Call{
         return true;
     }
 
+    public String toString(){
+        return "Incoming call: "+super.toString();
+    }
 }

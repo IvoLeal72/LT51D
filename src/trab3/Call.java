@@ -24,6 +24,10 @@ public abstract class Call implements Comparable<Call>{
         return duration;
     }
 
+    public void setDuration(Time duration) {
+        this.duration = duration;
+    }
+
     public abstract boolean isIncoming();
 
     public Call(String reg, Date data, Time time, Time duration) {
@@ -45,4 +49,9 @@ public abstract class Call implements Comparable<Call>{
         if(aux!=0) return aux;
         return this.time.compareTo(other.time);
     }
+
+    public String toString(){
+        return getReg()+" - "+getData()+" "+getTime()+". Duration: "+getDuration();
+    }
+
 }
