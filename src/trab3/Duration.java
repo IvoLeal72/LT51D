@@ -14,6 +14,18 @@ public class Duration implements Comparable<Duration>{
         sec=(int) secs%60;
     }
 
+    public int getHour() {
+        return hour;
+    }
+
+    public int getMin() {
+        return min;
+    }
+
+    public int getSec() {
+        return sec;
+    }
+
     public long toSeconds(){
         return hour* 3600L +min* 60L +sec;
     }

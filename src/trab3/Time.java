@@ -4,7 +4,7 @@ import trab2.Date;
 
 import java.util.Calendar;
 
-public class Time{
+public class Time implements Comparable<Time>{
     private final Date date;
     private final int hour, min, sec;
 
