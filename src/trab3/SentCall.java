@@ -3,12 +3,7 @@ package trab3;
 public class SentCall extends Call{
     private Duration d;
 
-    public SentCall(Time t, Duration d, String number, String name) {
-        super(t, number, name);
-        this.d=d;
-    }
-
-    public SentCall(Time t, Duration d, String number) {
+    public SentCall(Time t, String number, Duration d) {
         super(t, number);
         this.d=d;
     }

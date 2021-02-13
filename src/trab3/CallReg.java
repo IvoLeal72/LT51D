@@ -5,9 +5,7 @@ import trab2.NoteBook;
 import trab2.Utils;
 
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
+
 
 public class CallReg {
     private final Map<String, AnsweredCall> answeredCallMap=new HashMap<>();
@@ -31,17 +29,17 @@ public class CallReg {
     }
 
     public void addAnsweredCall(Time t, String number){
-        AnsweredCall toAdd=new AnsweredCall(t, number, getNameFromNum(number));
+        AnsweredCall toAdd=new AnsweredCall(t, number);
         Utils.actualize(answeredCallMap, ()->number, ()->toAdd, answeredCall -> answeredCall.merge(toAdd));
     }
 
     public void addRejectedCall(Time t, String number){
-        RejectedCall toAdd=new RejectedCall(t, number, getNameFromNum(number));
+        RejectedCall toAdd=new RejectedCall(t, number);
         Utils.actualize(rejectedCallMap, ()->number, ()->toAdd, rejectedCall -> rejectedCall.merge(toAdd));
     }
 
     public void addSentCall(Time t, String number, Duration d){
-        SentCall toAdd=new SentCall(t, d, number, getNameFromNum(number));
+        SentCall toAdd=new SentCall(t, number, d);
         Utils.actualize(sentCallMap, ()->number, ()->toAdd, sentCall -> sentCall.merge(toAdd));
     }
 }
