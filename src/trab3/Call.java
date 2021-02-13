@@ -2,7 +2,7 @@ package trab3;
 
 import trab2.Contact;
 
-public abstract class Call {
+public abstract class Call implements Comparable<Call>{
     private final Time time;
     private final String number;
     private final String name;

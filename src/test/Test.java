@@ -1,27 +1,26 @@
 package test;
 
-import java.io.File;
-import java.util.Objects;
+import java.util.Comparator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class Test{
-
-    public static void fileRecursvivePrint(File f, String prefix){
-        if(f.isDirectory()){
-            System.out.println(prefix+f.getName()+"\\");
-            File[] list=f.listFiles();
-            if(list!=null)
-                for(File temp: list){
-                    fileRecursvivePrint(temp, "-"+prefix);
-                }
-            return;
-        }
-        if(f.isFile()){
-            System.out.println(prefix+f.getName());
-        }
-    }
+    private static final SortedSet<Ponto> pontos=new TreeSet<>();
+    private static final SortedSet<Ponto> pontosInv=new TreeSet<>(Comparator.reverseOrder());
 
     public static void main(String[] args) {
-        File f= new File("D:\\OneDrive - Instituto Superior de Engenharia de Lisboa");
-        fileRecursvivePrint(f, "");
+        Ponto p1=new Ponto(0,0);
+        Ponto p2=new Ponto(1,0);
+        Ponto p3=new Ponto(1,1);
+
+        pontos.add(p1);
+        pontos.add(p3);
+        pontos.add(p2);
+        pontosInv.add(p2);
+        pontosInv.add(p3);
+        pontosInv.add(p1);
+
+        System.out.println(pontos);
+        System.out.println(pontosInv);
     }
 }
