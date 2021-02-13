@@ -1,7 +1,7 @@
 package trab3;
 
 public class SentCall extends Call{
-    private final Duration d;
+    private Duration d;
 
     public SentCall(Time t, Duration d, String number, String name) {
         super(t, number, name);
@@ -17,7 +17,12 @@ public class SentCall extends Call{
         return d;
     }
 
-    public SentCall merge(SentCall other) {
-        return new SentCall(other.getTime(), d.add(other.getDuration()), other.getNumber(), other.getName());
+    public boolean merge(Call other) {
+        if(other instanceof SentCall){
+            super.merge(other);
+            d=d.add(((SentCall) other).d);
+            return true;
+        }
+        return false;
     }
 }

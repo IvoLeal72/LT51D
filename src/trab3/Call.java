@@ -3,7 +3,7 @@ package trab3;
 import trab2.Contact;
 
 public abstract class Call implements Comparable<Call>{
-    private final Time time;
+    private Time time;
     private final String number;
     private final String name;
 
@@ -37,4 +37,8 @@ public abstract class Call implements Comparable<Call>{
         return (name==null?number:name)+" "+time.toString();
     }
 
+    public boolean merge(Call other){
+        time=other.time;
+        return true;
+    }
 }

@@ -1,6 +1,7 @@
 package test;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -16,11 +17,24 @@ public class Test{
         pontos.add(p1);
         pontos.add(p3);
         pontos.add(p2);
-        pontosInv.add(p2);
-        pontosInv.add(p3);
         pontosInv.add(p1);
+        pontosInv.add(p2);
 
         System.out.println(pontos);
         System.out.println(pontosInv);
+
+        Iterator<Ponto> list= pontosInv.iterator();
+        if(list.hasNext()){
+            list.next();
+            if(list.hasNext()){
+                System.out.println("Tem mais de 1");
+            }
+            else{
+                System.out.println("Tem 1");
+            }
+        }
+        else{
+            System.out.println("Não tem");
+        }
     }
 }

@@ -1,14 +1,47 @@
 package trab3;
 
+import trab2.Contact;
 import trab2.NoteBook;
+import trab2.Utils;
 
-import java.util.Comparator;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class CallReg {
-    private final SortedSet<AnsweredCall> answeredCalls=new TreeSet<>(Comparator.reverseOrder());
-    private final SortedSet<RejectedCall> rejectedCalls=new TreeSet<>(Comparator.reverseOrder());
-    private final SortedSet<SentCall> sentCalls=new TreeSet<>(Comparator.reverseOrder());
-    private final NoteBook noteBook=new NoteBook();
+    private final Map<String, AnsweredCall> answeredCallMap=new HashMap<>();
+    private final Map<String, RejectedCall> rejectedCallMap=new HashMap<>();
+    private final Map<String, SentCall> sentCallMap=new HashMap<>();
+    private final NoteBook noteBook;
+
+    public CallReg(NoteBook nb){
+        noteBook=nb;
+    }
+
+    public CallReg(){
+        this(new NoteBook());
+    }
+
+    private String getNameFromNum(String number){
+        Iterator<Contact> list=noteBook.getContactsOf(number).iterator();
+        Contact c=list.next();
+        if(c==null || list.hasNext()) return null;
+        return c.getName();
+    }
+
+    public void addAnsweredCall(Time t, String number){
+        AnsweredCall toAdd=new AnsweredCall(t, number, getNameFromNum(number));
+        Utils.actualize(answeredCallMap, ()->number, ()->toAdd, answeredCall -> answeredCall.merge(toAdd));
+    }
+
+    public void addRejectedCall(Time t, String number){
+        RejectedCall toAdd=new RejectedCall(t, number, getNameFromNum(number));
+        Utils.actualize(rejectedCallMap, ()->number, ()->toAdd, rejectedCall -> rejectedCall.merge(toAdd));
+    }
+
+    public void addSentCall(Time t, String number, Duration d){
+        SentCall toAdd=new SentCall(t, d, number, getNameFromNum(number));
+        Utils.actualize(sentCallMap, ()->number, ()->toAdd, sentCall -> sentCall.merge(toAdd));
+    }
 }
