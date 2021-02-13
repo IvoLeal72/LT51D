@@ -2,9 +2,10 @@ package trab3;
 
 import trab2.Date;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
-public class Time implements Comparable<Time>{
+public class Time implements Comparable<Time>, Serializable {
     private final Date date;
     private final int hour, min, sec;
 

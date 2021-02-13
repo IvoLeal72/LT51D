@@ -1,6 +1,8 @@
 package trab3;
 
-public class Duration implements Comparable<Duration>{
+import java.io.Serializable;
+
+public class Duration implements Comparable<Duration>, Serializable {
     private final int hour, min, sec;
 
     public Duration(int h, int m, int s){

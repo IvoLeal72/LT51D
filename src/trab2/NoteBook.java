@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * Agenda.
  */
-public class NoteBook {
+public class NoteBook implements Serializable{
     // Contentor associativo, associa o nome ao contacto.
     // A chave é o nome do contacto.
     // Não podem existir dois contactos com o mesmo nome.
@@ -17,7 +17,7 @@ public class NoteBook {
     // Contentor associativo ordenado por datas de nascimento de contactos cujo
     // aniversário é no mesmo dia/mes.
     // A chave data de nascimento o valor associado são os contactos que fazem anos no mesmo número de telefone.
-    private final SortedMap<Date, SortedSet<Contact> > birthdays = new TreeMap<>((d1,d2)->{
+    private final SortedMap<Date, SortedSet<Contact> > birthdays = new TreeMap<>((Comparator<Date> & Serializable) (d1,d2)->{
        int res=d1.getMonth()-d2.getMonth();
        if(res!=0) return res;
        return d1.getDay()-d2.getDay();

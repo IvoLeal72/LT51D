@@ -1,11 +1,12 @@
 package trab2;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Contacto. Um contacto tem nome, data de nascimento e conjunto de números de telefone.
  */
-public class Contact implements Comparable<Contact> {
+public class Contact implements Comparable<Contact>, Serializable {
     private final Date birthDate;
     private final String name;
     // Os número de telefones devem ser unicos e devem

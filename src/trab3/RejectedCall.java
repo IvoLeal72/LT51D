@@ -1,6 +1,8 @@
 package trab3;
 
-public class RejectedCall extends Call{
+import java.io.Serializable;
+
+public class RejectedCall extends Call implements Serializable {
     public RejectedCall(Time t, String number) {
         super(t, number);
     }

@@ -1,6 +1,8 @@
 package trab3;
 
-public class AnsweredCall extends Call{
+import java.io.Serializable;
+
+public class AnsweredCall extends Call implements Serializable {
     public AnsweredCall(Time t, String number) {
         super(t, number);
     }

@@ -1,6 +1,8 @@
 package trab3;
 
-public class SentCall extends Call{
+import java.io.Serializable;
+
+public class SentCall extends Call implements Serializable {
     private Duration d;
 
     public SentCall(Time t, String number, Duration d) {
@@ -19,5 +21,9 @@ public class SentCall extends Call{
             return true;
         }
         return false;
+    }
+
+    public String toString(){
+        return "Rejected call: "+super.toString()+" duration:"+d.toString();
     }
 }

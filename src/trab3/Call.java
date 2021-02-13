@@ -1,8 +1,8 @@
 package trab3;
 
-import trab2.Contact;
+import java.io.Serializable;
 
-public abstract class Call implements Comparable<Call>{
+public abstract class Call implements Comparable<Call>, Serializable{
     private Time time;
     private final String number;
 

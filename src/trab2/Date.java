@@ -1,8 +1,9 @@
 package trab2;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
-public class Date implements Comparable<Date> {
+public class Date implements Comparable<Date>, Serializable {
     private final int day, month, year;
 
     public Date(int d, int m, int y) {
