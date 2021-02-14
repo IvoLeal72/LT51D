@@ -1,13 +1,10 @@
 package trab3;
 
-import trab2.Date;
-
-import java.io.*;
+import java.io.IOException;
 
 public class Test {
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
-        CallReg test=new CallReg("93859782");
-
+    public static void main(String[] args) throws IOException {
+        CallReg test = new CallReg("123");
         test.save();
     }
 }

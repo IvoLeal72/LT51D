@@ -15,12 +15,21 @@ public class CallReg {
     private Map<String, SentCall> sentCallMap=new HashMap<>();
     private NoteBook noteBook;
 
-    public CallReg(String number, NoteBook nb){
-        this.number=number; noteBook=nb;
+    public CallReg(String number, NoteBook nb) {
+        this.number=number;
+        try{
+            load();
+        }
+        catch (Exception ignored){
+            noteBook=new NoteBook();
+        }
+        if(nb!=null){
+            noteBook=nb;
+        }
     }
 
     public CallReg(String number){
-        this(number, new NoteBook());
+        this(number, null);
     }
 
     private String getNameFromNum(String number){
@@ -58,7 +67,7 @@ public class CallReg {
     }
 
     public void save() throws IOException {
-        try(ObjectOutputStream objOut=new ObjectOutputStream(new FileOutputStream(number+".data"))) {
+        try(ObjectOutputStream objOut=new ObjectOutputStream(new FileOutputStream("src\\trab3\\dataFiles\\"+number+".data"))) {
             objOut.writeObject(number);
             objOut.writeObject(answeredCallMap);
             objOut.writeObject(rejectedCallMap);
@@ -68,7 +77,7 @@ public class CallReg {
     }
 
     public void load() throws IOException, ClassNotFoundException {
-        try(ObjectInputStream objIn=new ObjectInputStream(new FileInputStream(number+".data"))){
+        try(ObjectInputStream objIn=new ObjectInputStream(new FileInputStream("src\\trab3\\dataFiles\\"+number+".data"))){
             number=(String) objIn.readObject();
             answeredCallMap= (Map<String, AnsweredCall>) objIn.readObject();
             rejectedCallMap= (Map<String, RejectedCall>) objIn.readObject();

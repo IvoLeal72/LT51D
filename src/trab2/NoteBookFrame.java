@@ -1,8 +1,6 @@
 package trab2;
 
 import trab2.noteBook.gui.ContactDialog;
-import trab2.noteBook.gui.DatePanel;
-import trab2.noteBook.gui.TelephonesPanel;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -18,10 +16,10 @@ import java.util.function.Function;
  * Interface gráfica para visualizar e modificar a agenda.
  */
 public class NoteBookFrame extends JFrame {
-    private JFileChooser fileChooser = new JFileChooser( );
-    private NoteBook noteBook = new NoteBook();
-    private ContactDialog contactDialog = new ContactDialog(this, this::addContact );
-    private JTextArea listArea = new JTextArea( 15, 40 );
+    private final JFileChooser fileChooser = new JFileChooser( );
+    private final NoteBook noteBook = new NoteBook();
+    private final ContactDialog contactDialog = new ContactDialog(this, this::addContact );
+    private final JTextArea listArea = new JTextArea( 15, 40 );
 
     public static class ItensMenu extends
         AbstractMap.SimpleEntry<String, ActionListener> {
@@ -83,16 +81,16 @@ public class NoteBookFrame extends JFrame {
     }
 
     /**
-     * Instancia um menu e adiciona os itens descritos no array de itens
+     * Instância um menu e adiciona os itens descritos no array de itens
      * @param name nome do menu
      * @param itens array contendo a descrição dos itens (nome e ação a efetuar).
      * @return o menu instanciado
      */
     protected static JMenu createJMenu( String name, ItensMenu[] itens ){
         JMenu menu = new JMenu( name );
-        for (ItensMenu iten : itens) {
-            JMenuItem mi = new JMenuItem(iten.getKey());
-            mi.addActionListener(iten.getValue());
+        for (ItensMenu item : itens) {
+            JMenuItem mi = new JMenuItem(item.getKey());
+            mi.addActionListener(item.getValue());
             menu.add(mi);
         }
         return menu;
@@ -100,7 +98,7 @@ public class NoteBookFrame extends JFrame {
 
     /**
      * Método chamado quando é premido o botão "add contact".
-     * Coloca visivel uma janela de dialogo correspondente à inserção dos dados
+     * Coloca visível uma janela de dialogo correspondente à inserção dos dados
      * do contacto, quando é premido o botão submit é chamada o método apply
      * do Consumer passado por parâmetro no construtor.
      * @param actionEvent evento do action listener.
@@ -123,7 +121,7 @@ public class NoteBookFrame extends JFrame {
     /**
      * Método chamado quando é premido o botão "add phone".
      * Obtém o nome do contacto e caso exista um contacto com o nome, atualiza e
-     * coloca visivel uma janela de dialogo correspondente à inserção dos dados.
+     * coloca visível uma janela de dialogo correspondente à inserção dos dados.
      * @param actionEvent evento do action listener.
      */
     private void addPhone(ActionEvent actionEvent) {
@@ -140,7 +138,7 @@ public class NoteBookFrame extends JFrame {
     }
 
     /**
-     * Remov da agenda o contacto com .
+     * Remove da agenda o contacto com .
      * Obtém o nome do contacto a remover e remove-o da agenda.
      * @param actionEvent evento do action listener.
      */
@@ -149,7 +147,7 @@ public class NoteBookFrame extends JFrame {
         if ( name != null ) {
             if ( !noteBook.remove( name ) ) {
                 JOptionPane.showMessageDialog(this, "Contact not exist", "Delete",JOptionPane.ERROR_MESSAGE);
-            };
+            }
             list("Contact List", noteBook.getAllContacts(), Contact::toString );
         }
     }
@@ -159,8 +157,6 @@ public class NoteBookFrame extends JFrame {
      * @param title - titulo a colocar na cercadura da area de texto
      * @param seq sequência de Elementos.
      * @param toList - Função para obter o valor a listar
-     * @param <E>
-     * @param <V>
      */
     private <E, V> void list(String title, Iterable<E> seq, Function<E, V> toList){
        ((TitledBorder)listArea.getBorder()).setTitle( title );
@@ -205,14 +201,9 @@ public class NoteBookFrame extends JFrame {
         list("Contact List", noteBook.getAllContacts(), Contact::toString );
     }
 
-    /***************************************************
-     *  Métodos associados aos itens do menu "List"
-     *
-     ***************************************************/
     /**
      * Método chamado quando é selecionado o item "all contacts".
      * Lista todos os contactos.
-     * @param actionEvent
      */
     private void listAll(ActionEvent actionEvent) {
         list("Contact List", noteBook.getAllContacts(), Contact::toString );
@@ -220,9 +211,8 @@ public class NoteBookFrame extends JFrame {
 
     /**
      * Método chamado quando é selecionado o item "month birthdays".
-     * Coloca visivel uma janela de dialogo para a inserção do mês.
+     * Coloca visível uma janela de dialogo para a inserção do mês.
      * Após ter a idade lista os contactos com a idade pretendida.
-     * @param actionEvent
      */
     private void listMonthBirthdays( ActionEvent actionEvent ) {
         String month=JOptionPane.showInputDialog(this, "Search By Birth Month", "Month", JOptionPane.QUESTION_MESSAGE);
@@ -237,9 +227,8 @@ public class NoteBookFrame extends JFrame {
 
     /**
      * Método chamado quando é selecionado o item "names with this phone".
-     * Coloca visivel uma janela de dialogo para a inserção do número de telefone.
+     * Coloca visível uma janela de dialogo para a inserção do número de telefone.
      * Após ter o nome lista os nomes que contêm este número de telefone.
-     * @param actionEvent
      */
     private void listNamesWithThisPhone(ActionEvent actionEvent) {
         String number=JOptionPane.showInputDialog(this, "Search By Phone", "Phone", JOptionPane.QUESTION_MESSAGE);
@@ -248,7 +237,6 @@ public class NoteBookFrame extends JFrame {
 
     /**
      * Método chamado quando é selecionado o item "today birthdays".
-     * @param actionEvent
      */
     private void listTodayBirthdays(ActionEvent actionEvent) {
         Date today=new Date();

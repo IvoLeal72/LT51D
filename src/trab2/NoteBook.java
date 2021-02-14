@@ -30,8 +30,8 @@ public class NoteBook implements Serializable{
      *   adiciona os números de telefone ao contacto já existente.
      * - Caso já exista um contacto com o mesmo nome e data de nascimento
      *   diferente não adiciona.
-     * Actualiza o contentor de aniversários com os telefones deste contacto.
-     * Actualiza o contentor de telefones com os telefones deste contacto.
+     * Atualiza o contentor de aniversários com os telefones deste contacto.
+     * Atualiza o contentor de telefones com os telefones deste contacto.
      *
      * @param contact contacto a adicionar
      * @return true caso tenha adicionado ou atualizado as estruturas.
@@ -58,7 +58,7 @@ public class NoteBook implements Serializable{
     /**
      * Adicionar todos os contactos doutra agenda.
      * Não adiciona caso já exista um contacto com o mesmo nome e data de nascimento, neste caso
-     * adiciona os numeros de telefone ao contacto já existente.
+     * adiciona os números de telefone ao contacto já existente.
      * @param nb agenda
      */
     public void add( NoteBook nb ) {
@@ -153,8 +153,8 @@ public class NoteBook implements Serializable{
     }
 
 
-    /*********************************************************************
-     * Leitura e escrita em ficheiro
+    /********************************************************************
+     Leitura e escrita em ficheiro
      */
     /**
      * Lê os contactos do ficheiro de texto para a agenda.
