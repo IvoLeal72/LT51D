@@ -17,7 +17,7 @@ import java.util.function.Function;
  */
 public class NoteBookFrame extends JFrame {
     private final JFileChooser fileChooser = new JFileChooser( );
-    private final NoteBook noteBook = new NoteBook();
+    private NoteBook noteBook = new NoteBook();
     private final ContactDialog contactDialog = new ContactDialog(this, this::addContact );
     private final JTextArea listArea = new JTextArea( 15, 40 );
 
@@ -25,10 +25,12 @@ public class NoteBookFrame extends JFrame {
         AbstractMap.SimpleEntry<String, ActionListener> {
         public ItensMenu(String s, ActionListener l){ super(s,l);}
     }
+
     public ItensMenu[] fileMenus = {
-            new ItensMenu("load", this::load),
-            new ItensMenu("save", this::save),
-            new ItensMenu("exit", this::exit)};
+            new ItensMenu("import", this::load),
+            new ItensMenu("export", this::save),
+            new ItensMenu("exit", this::exit)
+    };
 
     public ItensMenu[] editMenus = {
             new ItensMenu("add contact", this::addContact),
@@ -49,9 +51,9 @@ public class NoteBookFrame extends JFrame {
             new ItensMenu("dates with more birthdays", this::listDatesWithMoreBirthdays)
     };
 
-    public NoteBookFrame(){
-        super("NoteBook");
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    public NoteBookFrame(String number){
+        super("NoteBook "+number);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         // Adicionar a TextArea para a listagem, com barra de scroll
         listArea.setBorder(new TitledBorder("list"));
@@ -78,6 +80,19 @@ public class NoteBookFrame extends JFrame {
         menuBar.add(createJMenu("With more", withMoreMenus));
         setJMenuBar( menuBar );
         pack();
+    }
+
+    public NoteBookFrame(String number, NoteBook nb){
+        this(number);
+        noteBook=nb;
+    }
+
+    public NoteBookFrame(NoteBook nb){
+        this("", nb);
+    }
+
+    public NoteBookFrame(){
+        super("");
     }
 
     /**

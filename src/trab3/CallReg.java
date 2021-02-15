@@ -13,26 +13,21 @@ public class CallReg {
     private Map<String, AnsweredCall> answeredCallMap=new HashMap<>();
     private Map<String, RejectedCall> rejectedCallMap=new HashMap<>();
     private Map<String, SentCall> sentCallMap=new HashMap<>();
-    private NoteBook noteBook;
+    private NoteBook noteBook=new NoteBook();
 
-    public CallReg(String number, NoteBook nb) {
+    public CallReg(String number) {
         this.number=number;
-        try{
-            load();
-        }
-        catch (Exception ignored){
-            noteBook=new NoteBook();
-        }
-        if(nb!=null){
-            noteBook=nb;
-        }
     }
 
-    public CallReg(String number){
-        this(number, null);
+    public NoteBook getNoteBook() {
+        return noteBook;
     }
 
-    private String getNameFromNum(String number){
+    public String getNumber() {
+        return number;
+    }
+
+    public String getNameFromNum(String number){
         Iterator<Contact> list=noteBook.getContactsOf(number).iterator();
         Contact c=list.next();
         if(c==null || list.hasNext()) return null;
@@ -66,8 +61,8 @@ public class CallReg {
         return sentCallMap.values();
     }
 
-    public void save() throws IOException {
-        try(ObjectOutputStream objOut=new ObjectOutputStream(new FileOutputStream("src\\trab3\\dataFiles\\"+number+".data"))) {
+    public void save(File file) throws IOException {
+        try(ObjectOutputStream objOut=new ObjectOutputStream(new FileOutputStream(file))) {
             objOut.writeObject(number);
             objOut.writeObject(answeredCallMap);
             objOut.writeObject(rejectedCallMap);
@@ -76,13 +71,22 @@ public class CallReg {
         }
     }
 
-    public void load() throws IOException, ClassNotFoundException {
-        try(ObjectInputStream objIn=new ObjectInputStream(new FileInputStream("src\\trab3\\dataFiles\\"+number+".data"))){
+    public void load(File file) throws IOException, ClassNotFoundException {
+        try(ObjectInputStream objIn=new ObjectInputStream(new FileInputStream(file))){
             number=(String) objIn.readObject();
             answeredCallMap= (Map<String, AnsweredCall>) objIn.readObject();
             rejectedCallMap= (Map<String, RejectedCall>) objIn.readObject();
             sentCallMap= (Map<String, SentCall>) objIn.readObject();
             noteBook=(NoteBook) objIn.readObject();
         }
+    }
+
+    public String toStringReceivedCallWithName(Call call){
+        String name=getNameFromNum(call.getNumber());
+        return name!=null?name:call.getNumber()+" "+call.getTime().toString();
+    }
+
+    public String toStringSentCallWithName(SentCall sentCall){
+        return toStringReceivedCallWithName(sentCall)+" duration:"+sentCall.getDuration().toString();
     }
 }
