@@ -176,7 +176,7 @@ public class NoteBookFrame extends JFrame {
     private <E, V> void list(String title, Iterable<E> seq, Function<E, V> toList){
        ((TitledBorder)listArea.getBorder()).setTitle( title );
        listArea.setText( "" );
-       if ( seq == null )
+       if ( seq == null || !seq.iterator().hasNext() )
            listArea.append( "Not exist contacts \n");
        else for( E e : seq )
            listArea.append( toList.apply( e ) + "\n");
