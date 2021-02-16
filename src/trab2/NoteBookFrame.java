@@ -62,6 +62,7 @@ public class NoteBookFrame extends JFrame {
         super("NoteBook "+number);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.master=master;
+        if(master!=null) noteBook=master.getCallReg().getNoteBook();
         // Adicionar a TextArea para a listagem, com barra de scroll
         listArea.setBorder(new TitledBorder("list"));
         JScrollPane sp = new JScrollPane(listArea);
@@ -134,6 +135,11 @@ public class NoteBookFrame extends JFrame {
     private void addContact(Contact c) {
         if (noteBook.add( c ) ) {
             list("Contact List", noteBook.getAllContacts(), Contact::toString);
+            try {
+                master.getCallReg().autoSave();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
     /**
@@ -167,6 +173,11 @@ public class NoteBookFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, "Contact not exist", "Delete",JOptionPane.ERROR_MESSAGE);
             }
             list("Contact List", noteBook.getAllContacts(), Contact::toString );
+            try {
+                master.getCallReg().autoSave();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
