@@ -13,6 +13,7 @@ public class CallReg {
     private Map<String, AnsweredCall> answeredCallMap=new HashMap<>();
     private Map<String, RejectedCall> rejectedCallMap=new HashMap<>();
     private Map<String, SentCall> sentCallMap=new HashMap<>();
+    private SortedMap<Time, Call> callMap=new TreeMap<>(Comparator.reverseOrder());
     private NoteBook noteBook=new NoteBook();
 
     public CallReg(String number){
@@ -43,6 +44,7 @@ public class CallReg {
     public void addAnsweredCall(Time t, String number){
         AnsweredCall toAdd=new AnsweredCall(t, number);
         Utils.actualize(answeredCallMap, ()->number, ()->toAdd, answeredCall -> answeredCall.merge(toAdd));
+        Utils.actualize(callMap, ()->t, ()->toAdd, x-> true);
         try {
             autoSave();
         } catch (IOException e) {
@@ -53,6 +55,7 @@ public class CallReg {
     public void addRejectedCall(Time t, String number){
         RejectedCall toAdd=new RejectedCall(t, number);
         Utils.actualize(rejectedCallMap, ()->number, ()->toAdd, rejectedCall -> rejectedCall.merge(toAdd));
+        Utils.actualize(callMap, ()->t, ()->toAdd, x-> true);
         try {
             autoSave();
         } catch (IOException e) {
@@ -68,6 +71,7 @@ public class CallReg {
     public void addSentCall(Time t, String number, Duration d){
         SentCall toAdd=new SentCall(t, number, d);
         Utils.actualize(sentCallMap, ()->number, ()->toAdd, sentCall -> sentCall.merge(toAdd));
+        Utils.actualize(callMap, ()->t, ()->toAdd, x-> true);
         try {
             autoSave();
         } catch (IOException e) {
@@ -75,16 +79,42 @@ public class CallReg {
         }
     }
 
+    private final static Comparator<Call> callCmpDescendingTime=new Comparator<Call>() {
+        @Override
+        public int compare(Call o1, Call o2) {
+            return o2.getTime().compareTo(o1.getTime());
+        }
+    };
+
     public Iterable<AnsweredCall> getAnsweredCalls(){
-        return answeredCallMap.values();
+        Iterable<AnsweredCall> iterable= answeredCallMap.values();
+        LinkedList<AnsweredCall> list=new LinkedList<>();
+        for(AnsweredCall call:iterable)
+            list.add(call);
+        list.sort(callCmpDescendingTime);
+        return list;
     }
 
     public Iterable<RejectedCall> getRejectedCalls(){
-        return rejectedCallMap.values();
+        Iterable<RejectedCall> iterable= rejectedCallMap.values();
+        LinkedList<RejectedCall> list=new LinkedList<>();
+        for(RejectedCall call:iterable)
+            list.add(call);
+        list.sort(callCmpDescendingTime);
+        return list;
     }
 
     public Iterable<SentCall> getSentCalls(){
-        return sentCallMap.values();
+        Iterable<SentCall> iterable= sentCallMap.values();
+        LinkedList<SentCall> list=new LinkedList<>();
+        for(SentCall call:iterable)
+            list.add(call);
+        list.sort(callCmpDescendingTime);
+        return list;
+    }
+
+    public Iterable<Call> getAllCalls(){
+        return callMap.values();
     }
 
     public void save(File file) throws IOException {
@@ -92,6 +122,7 @@ public class CallReg {
             objOut.writeObject(answeredCallMap);
             objOut.writeObject(rejectedCallMap);
             objOut.writeObject(sentCallMap);
+            objOut.writeObject(callMap);
             objOut.writeObject(noteBook);
         }
     }
@@ -101,20 +132,27 @@ public class CallReg {
             answeredCallMap= (Map<String, AnsweredCall>) objIn.readObject();
             rejectedCallMap= (Map<String, RejectedCall>) objIn.readObject();
             sentCallMap= (Map<String, SentCall>) objIn.readObject();
+            callMap= (SortedMap<Time, Call>) objIn.readObject();
             noteBook=(NoteBook) objIn.readObject();
         }
     }
 
-    public String toStringReceivedCallWithName(Call call){
+    private String toStringReceivedCallWithName(Call call){
         String name=getNameFromNum(call.getNumber());
-        return name!=null?name:call.getNumber()+" "+call.getTime().toString();
+        return (name!=null?name:call.getNumber())+" "+call.getTime().toString();
     }
 
-    public String toStringSentCallWithName(SentCall sentCall){
+    private String toStringSentCallWithName(SentCall sentCall){
         return toStringReceivedCallWithName(sentCall)+" duration:"+sentCall.getDuration().toString();
     }
 
     public void autoSave() throws IOException {
         save(new File("dataFiles\\"+number+".data"));
+    }
+
+    public String toStringCallWithName(Call call){
+        if(call instanceof SentCall)
+            return toStringSentCallWithName((SentCall) call);
+        return toStringReceivedCallWithName(call);
     }
 }

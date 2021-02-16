@@ -1,5 +1,6 @@
 package trab3;
 
+import trab2.NoteBook;
 import trab2.NoteBookFrame;
 import trab2.NoteBookFrame.*;
 
@@ -21,7 +22,11 @@ public class CallRegFrame extends JFrame {
     private final CallReg callReg;
     private final JTextArea listArea = new JTextArea( 15, 40 );
 
-    protected static JMenu createJMenu( String name, ItensMenu[] itens ){
+    public CallReg getCallReg() {
+        return callReg;
+    }
+
+    protected static JMenu createJMenu(String name, ItensMenu[] itens ){
         JMenu menu = new JMenu( name );
         for (ItensMenu item : itens) {
             JMenuItem mi = new JMenuItem(item.getKey());
@@ -40,7 +45,21 @@ public class CallRegFrame extends JFrame {
         public void windowClosed(WindowEvent arg0) {
             Object obj=arg0.getSource();
             if(obj instanceof CallRegFrame){
+                try {
+                    ((CallRegFrame) obj).callReg.autoSave();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 opened.remove(((CallRegFrame) obj).callReg.getNumber());
+            }
+            if(obj instanceof NoteBookFrame){
+                if (((NoteBookFrame) obj).getMaster()!=null){
+                    try {
+                        ((NoteBookFrame) obj).getMaster().getCallReg().autoSave();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
             if (--n <= 0) System.exit(0);
         }
@@ -55,6 +74,7 @@ public class CallRegFrame extends JFrame {
     };
 
     public ItensMenu[] listMenus = {
+            new ItensMenu("list all calls", this::listAll),
             new ItensMenu("list answered calls", this::listAnswered),
             new ItensMenu("list rejected calls", this::listRejected),
             new ItensMenu("list sent calls", this::listSent)
@@ -81,6 +101,7 @@ public class CallRegFrame extends JFrame {
         add(button, BorderLayout.SOUTH);
         pack();
 
+        listAll(null);
     }
 
     public static void new_CallRegFrame(ActionEvent actionEvent){
@@ -133,7 +154,7 @@ public class CallRegFrame extends JFrame {
     }
 
     private void open_notebook(ActionEvent actionEvent) {
-        NoteBookFrame nbf=new NoteBookFrame(callReg.getNumber(), callReg.getNoteBook());
+        NoteBookFrame nbf=new NoteBookFrame(callReg.getNumber(), this);
         nbf.setVisible(true);
         nbf.addWindowListener(wl);
     }
@@ -147,16 +168,20 @@ public class CallRegFrame extends JFrame {
             listArea.append( toList.apply( e ) + "\n");
     }
 
-    private void listSent(ActionEvent actionEvent) {
-        list("Sent calls", callReg.getSentCalls(), callReg::toStringSentCallWithName);
+    public void listSent(ActionEvent actionEvent) {
+        list("Sent calls", callReg.getSentCalls(), callReg::toStringCallWithName);
     }
 
-    private void listRejected(ActionEvent actionEvent) {
-        list("Rejected calls", callReg.getRejectedCalls(), callReg::toStringReceivedCallWithName);
+    public void listRejected(ActionEvent actionEvent) {
+        list("Rejected calls", callReg.getRejectedCalls(), callReg::toStringCallWithName);
     }
 
-    private void listAnswered(ActionEvent actionEvent) {
-        list("Answered calls", callReg.getAnsweredCalls(), callReg::toStringReceivedCallWithName);
+    public void listAnswered(ActionEvent actionEvent) {
+        list("Answered calls", callReg.getAnsweredCalls(), callReg::toStringCallWithName);
+    }
+
+    public void listAll(ActionEvent actionEvent) {
+        list("Calls", callReg.getAllCalls(), callReg::toStringCallWithName);
     }
 
     public static boolean showConfirmDialogWithTimeout(Object params, String title, int timeout_ms) {
@@ -212,11 +237,10 @@ public class CallRegFrame extends JFrame {
         boolean accepted= destination.receiveCall(t, callReg.getNumber());
         if(!accepted){
             callReg.addSentCall(t, number, new Duration());
+            listSent(null);
         }
         else {
-            LiveCall liveCall = new LiveCall(callReg.getNumber(), number);
-            callReg.addSentCall(t, number, liveCall.waitForCallEnd());
+            new LiveCall(callReg.getNumber(), number, this, t);
         }
-        listSent(null);
     }
 }

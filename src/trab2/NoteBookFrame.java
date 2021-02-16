@@ -1,6 +1,8 @@
 package trab2;
 
 import trab2.noteBook.gui.ContactDialog;
+import trab3.CallReg;
+import trab3.CallRegFrame;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -20,6 +22,7 @@ public class NoteBookFrame extends JFrame {
     private NoteBook noteBook = new NoteBook();
     private final ContactDialog contactDialog = new ContactDialog(this, this::addContact );
     private final JTextArea listArea = new JTextArea( 15, 40 );
+    private final CallRegFrame master;
 
     public static class ItensMenu extends
         AbstractMap.SimpleEntry<String, ActionListener> {
@@ -45,16 +48,20 @@ public class NoteBookFrame extends JFrame {
             new ItensMenu("this month birthdays", this::listMonthBirthdays)
     };
 
+    public CallRegFrame getMaster() {
+        return master;
+    }
+
     public ItensMenu[] withMoreMenus = {
             new ItensMenu("contacts with more phones", this::listMoreNumbers),
             new ItensMenu("phones with more contacts", this::listPhonesWithMoreContacts),
             new ItensMenu("dates with more birthdays", this::listDatesWithMoreBirthdays)
     };
 
-    public NoteBookFrame(String number){
+    public NoteBookFrame(String number, CallRegFrame master){
         super("NoteBook "+number);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
+        this.master=master;
         // Adicionar a TextArea para a listagem, com barra de scroll
         listArea.setBorder(new TitledBorder("list"));
         JScrollPane sp = new JScrollPane(listArea);
@@ -82,17 +89,12 @@ public class NoteBookFrame extends JFrame {
         pack();
     }
 
-    public NoteBookFrame(String number, NoteBook nb){
-        this(number);
-        noteBook=nb;
-    }
-
-    public NoteBookFrame(NoteBook nb){
-        this("", nb);
+    public NoteBookFrame(String number){
+        this(number, null);
     }
 
     public NoteBookFrame(){
-        super("");
+        this("");
     }
 
     /**
@@ -130,8 +132,9 @@ public class NoteBookFrame extends JFrame {
      * @param c contacto a adicionar
      */
     private void addContact(Contact c) {
-        if (noteBook.add( c ) )
-            list("Contact List", noteBook.getAllContacts(), Contact::toString );
+        if (noteBook.add( c ) ) {
+            list("Contact List", noteBook.getAllContacts(), Contact::toString);
+        }
     }
     /**
      * Método chamado quando é premido o botão "add phone".
@@ -187,12 +190,7 @@ public class NoteBookFrame extends JFrame {
      *
      ***************************************************/
     private void exit( ActionEvent actionEvent ) {
-        int res = JOptionPane.showConfirmDialog(this, "Save notebook", "save", JOptionPane.YES_NO_CANCEL_OPTION);
-        if ( res != JOptionPane.CANCEL_OPTION ) {
-            if ( res == JOptionPane.YES_OPTION )
-                save(actionEvent);
-            System.exit(0);
-        }
+        dispose();
     }
 
     private void save(ActionEvent actionEvent) {
