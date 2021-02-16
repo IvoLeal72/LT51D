@@ -13,7 +13,6 @@ public class CallReg {
     private Map<String, AnsweredCall> answeredCallMap=new HashMap<>();
     private Map<String, RejectedCall> rejectedCallMap=new HashMap<>();
     private Map<String, SentCall> sentCallMap=new HashMap<>();
-    private SortedMap<Time, Call> callMap=new TreeMap<>(Comparator.reverseOrder());
     private NoteBook noteBook=new NoteBook();
 
     public CallReg(String number){
@@ -41,10 +40,10 @@ public class CallReg {
         return c.getName();
     }
 
+
     public void addAnsweredCall(Time t, String number){
         AnsweredCall toAdd=new AnsweredCall(t, number);
         Utils.actualize(answeredCallMap, ()->number, ()->toAdd, answeredCall -> answeredCall.merge(toAdd));
-        Utils.actualize(callMap, ()->t, ()->toAdd, x-> true);
         try {
             autoSave();
         } catch (IOException e) {
@@ -55,7 +54,6 @@ public class CallReg {
     public void addRejectedCall(Time t, String number){
         RejectedCall toAdd=new RejectedCall(t, number);
         Utils.actualize(rejectedCallMap, ()->number, ()->toAdd, rejectedCall -> rejectedCall.merge(toAdd));
-        Utils.actualize(callMap, ()->t, ()->toAdd, x-> true);
         try {
             autoSave();
         } catch (IOException e) {
@@ -71,7 +69,6 @@ public class CallReg {
     public void addSentCall(Time t, String number, Duration d){
         SentCall toAdd=new SentCall(t, number, d);
         Utils.actualize(sentCallMap, ()->number, ()->toAdd, sentCall -> sentCall.merge(toAdd));
-        Utils.actualize(callMap, ()->t, ()->toAdd, x-> true);
         try {
             autoSave();
         } catch (IOException e) {
@@ -114,7 +111,17 @@ public class CallReg {
     }
 
     public Iterable<Call> getAllCalls(){
-        return callMap.values();
+        Iterable<AnsweredCall> iterable1=answeredCallMap.values();
+        Iterable<RejectedCall> iterable2=rejectedCallMap.values();
+        Iterable<SentCall> iterable3=sentCallMap.values();
+        SortedSet<Call> list=new TreeSet<>(callCmpDescendingTime);
+        for(Call call:iterable1)
+            list.add(call);
+        for(Call call:iterable2)
+            list.add(call);
+        for(Call call:iterable3)
+            list.add(call);
+        return list;
     }
 
     public void save(File file) throws IOException {
@@ -122,7 +129,6 @@ public class CallReg {
             objOut.writeObject(answeredCallMap);
             objOut.writeObject(rejectedCallMap);
             objOut.writeObject(sentCallMap);
-            objOut.writeObject(callMap);
             objOut.writeObject(noteBook);
         }
     }
@@ -132,7 +138,6 @@ public class CallReg {
             answeredCallMap= (Map<String, AnsweredCall>) objIn.readObject();
             rejectedCallMap= (Map<String, RejectedCall>) objIn.readObject();
             sentCallMap= (Map<String, SentCall>) objIn.readObject();
-            callMap= (SortedMap<Time, Call>) objIn.readObject();
             noteBook=(NoteBook) objIn.readObject();
         }
     }

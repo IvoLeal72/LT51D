@@ -1,5 +1,6 @@
 package trab3;
 
+import trab2.Contact;
 import trab2.NoteBook;
 import trab2.NoteBookFrame;
 import trab2.NoteBookFrame.*;
@@ -96,9 +97,18 @@ public class CallRegFrame extends JFrame {
         menuBar.add(createJMenu("List", listMenus));
         setJMenuBar( menuBar );
 
-        JButton button=new JButton("Call");
-        button.addActionListener(this::makeCall);
-        add(button, BorderLayout.SOUTH);
+        JPanel south=new JPanel();
+        ((FlowLayout) south.getLayout()).setVgap(0);
+
+        JButton button1=new JButton("Call");
+        button1.addActionListener(this::makeCall_num);
+        south.add(button1);
+
+        JButton button2=new JButton("Call contact");
+        button2.addActionListener(this::makeCall_name);
+        south.add(button2);
+
+        add(south, BorderLayout.SOUTH);
         pack();
 
         listAll(null);
@@ -218,19 +228,15 @@ public class CallRegFrame extends JFrame {
     }
 
     public boolean receiveCall(Time t, String number) {
-        boolean answered = showConfirmDialogWithTimeout(new JLabel(number+" calling. Answer?"), callReg.getNumber(), 10000);
+        String name=getCallReg().getNameFromNum(number);
+        boolean answered = showConfirmDialogWithTimeout(new JLabel((name!=null?name:number)+" calling. Answer?"), callReg.getNumber(), 10000);
         callReg.addReceivedCall(t, number, answered);
         if(answered) listAnswered(null);
         else listRejected(null);
         return answered;
     }
 
-    public void makeCall(ActionEvent actionEvent){
-        String number="";
-        while(number.length()!=9) {
-            number = JOptionPane.showInputDialog("Call", "number");
-            if(number==null) return;
-        }
+    public void makeCall(String number){
         new_CallRegFrame_num(number);
         CallRegFrame destination=opened.get(number);
         Time t=new Time();
@@ -242,5 +248,32 @@ public class CallRegFrame extends JFrame {
         else {
             new LiveCall(callReg.getNumber(), number, this, t);
         }
+    }
+
+    public void makeCall_num(ActionEvent actionEvent){
+        String number="";
+        while(number.length()!=9) {
+            number = JOptionPane.showInputDialog("Call", "number");
+            if(number==null) return;
+        }
+        makeCall(number);
+    }
+
+    public void makeCall_name(ActionEvent actionEvent){
+        Iterable<Contact> iterable=getCallReg().getNoteBook().getAllContacts();
+        if(!iterable.iterator().hasNext()) return;
+        ArrayList<String> options=new ArrayList<>();
+        iterable.forEach(contact -> {
+            if(contact.getTelephones().size()>0) options.add(contact.getName());
+        });
+        String name=(String)JOptionPane.showInputDialog(this, "Contacts:", "Call",
+                                    JOptionPane.QUESTION_MESSAGE, null, options.toArray(), options.get(0));
+        Collection<String> numList= getCallReg().getNoteBook().getContact(name).getTelephones();
+        String number=numList.iterator().next();
+        if(numList.size()>1){
+            number=(String)JOptionPane.showInputDialog(this, "Numbers:", "Call "+name,
+                                JOptionPane.QUESTION_MESSAGE, null, numList.toArray(), numList.iterator().next());
+        }
+        makeCall(number);
     }
 }
