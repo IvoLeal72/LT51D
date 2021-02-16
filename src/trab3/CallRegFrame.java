@@ -4,10 +4,9 @@ import trab2.NoteBookFrame;
 import trab2.NoteBookFrame.*;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -59,9 +58,6 @@ public class CallRegFrame extends JFrame {
             new ItensMenu("list rejected calls", this::listRejected),
             new ItensMenu("list sent calls", this::listSent)
     };
-
-
-
 
     public CallRegFrame(String number) throws IOException, ClassNotFoundException {
         super(number);
@@ -148,5 +144,45 @@ public class CallRegFrame extends JFrame {
 
     private void listAnswered(ActionEvent actionEvent) {
         list("Answered calls", callReg.getAnsweredCalls(), callReg::toStringReceivedCallWithName);
+    }
+
+    public static boolean showConfirmDialogWithTimeout(Object params, String title, int timeout_ms) {
+        final JOptionPane msg = new JOptionPane(params, JOptionPane.WARNING_MESSAGE, JOptionPane.YES_NO_OPTION);
+        final JDialog dlg = msg.createDialog(title);
+
+        msg.setInitialSelectionValue(JOptionPane.NO_OPTION);
+        dlg.setAlwaysOnTop(true);
+        dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        final boolean[] closedByTime = {false};
+        dlg.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                super.componentShown(e);
+                final Timer t = new Timer(timeout_ms, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        closedByTime[0] =true;
+                        dlg.setVisible(false);
+                    }
+
+                });
+                t.start();
+            }
+        });
+        dlg.setVisible(true);
+
+        Object selectedValue = msg.getValue();
+        if (selectedValue.equals(JOptionPane.NO_OPTION) || closedByTime[0]) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public boolean receiveCall(String number) {
+        boolean answered = showConfirmDialogWithTimeout(new JLabel(number+" calling. Answer?"), callReg.getNumber(), 10000);
+        Time t=new Time();
+        callReg.addReceivedCall(t, number, answered);
+        return answered;
     }
 }

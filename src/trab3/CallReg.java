@@ -41,16 +41,36 @@ public class CallReg {
     public void addAnsweredCall(Time t, String number){
         AnsweredCall toAdd=new AnsweredCall(t, number);
         Utils.actualize(answeredCallMap, ()->number, ()->toAdd, answeredCall -> answeredCall.merge(toAdd));
+        try {
+            autoSave();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void addRejectedCall(Time t, String number){
         RejectedCall toAdd=new RejectedCall(t, number);
         Utils.actualize(rejectedCallMap, ()->number, ()->toAdd, rejectedCall -> rejectedCall.merge(toAdd));
+        try {
+            autoSave();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addReceivedCall(Time t, String number, boolean answered){
+        if(answered) addAnsweredCall(t, number);
+        else addRejectedCall(t, number);
     }
 
     public void addSentCall(Time t, String number, Duration d){
         SentCall toAdd=new SentCall(t, number, d);
         Utils.actualize(sentCallMap, ()->number, ()->toAdd, sentCall -> sentCall.merge(toAdd));
+        try {
+            autoSave();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Iterable<AnsweredCall> getAnsweredCalls(){

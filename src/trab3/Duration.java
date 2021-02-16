@@ -16,6 +16,10 @@ public class Duration implements Comparable<Duration>, Serializable {
         sec=(int) secs%60;
     }
 
+    public Duration(){
+        this(0);
+    }
+
     public int getHour() {
         return hour;
     }
