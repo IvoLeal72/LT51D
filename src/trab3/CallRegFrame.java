@@ -181,7 +181,7 @@ public class CallRegFrame extends JFrame {
     }
 
     public void listAll(ActionEvent actionEvent) {
-        list("Calls", callReg.getAllCalls(), callReg::toStringCallWithName);
+        list("Calls", callReg.getAllCalls(), callReg::toStringCallWithNameAndType);
     }
 
     public static boolean showConfirmDialogWithTimeout(Object params, String title, int timeout_ms) {

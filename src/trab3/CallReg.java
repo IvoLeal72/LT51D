@@ -155,4 +155,12 @@ public class CallReg {
             return toStringSentCallWithName((SentCall) call);
         return toStringReceivedCallWithName(call);
     }
+
+    public String toStringCallWithNameAndType(Call call){
+        String str="";
+        if(call instanceof AnsweredCall) str="Answered: ";
+        else if(call instanceof RejectedCall) str="Rejected: ";
+        else if(call instanceof SentCall) str="Sent: ";
+        return str+toStringCallWithName(call);
+    }
 }
