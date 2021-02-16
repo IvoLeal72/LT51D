@@ -6,6 +6,7 @@ import trab2.NoteBookFrame.*;
 import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
@@ -68,12 +69,16 @@ public class CallRegFrame extends JFrame {
         listArea.setBorder(new TitledBorder("list"));
         JScrollPane sp = new JScrollPane(listArea);
         sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        add(sp);
+        add(sp, BorderLayout.CENTER);
 
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(createJMenu("File", fileMenus));
         menuBar.add(createJMenu("List", listMenus));
         setJMenuBar( menuBar );
+
+        JButton button=new JButton("Call");
+        button.addActionListener(this::makeCall);
+        add(button, BorderLayout.SOUTH);
         pack();
 
     }
@@ -84,6 +89,10 @@ public class CallRegFrame extends JFrame {
             number = JOptionPane.showInputDialog("Open Telephone", "number");
             if(number==null) return;
         }
+        new_CallRegFrame_num(number);
+    }
+
+    public static void new_CallRegFrame_num(String number){
         if(opened.containsKey(number)) return;
         try {
             CallRegFrame frame = new CallRegFrame(number);
@@ -93,6 +102,10 @@ public class CallRegFrame extends JFrame {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void new_CallRegFrame(){
+        new_CallRegFrame(null);
     }
 
     private void exit(ActionEvent actionEvent) {
@@ -179,10 +192,31 @@ public class CallRegFrame extends JFrame {
         }
     }
 
-    public boolean receiveCall(String number) {
+    public boolean receiveCall(Time t, String number) {
         boolean answered = showConfirmDialogWithTimeout(new JLabel(number+" calling. Answer?"), callReg.getNumber(), 10000);
-        Time t=new Time();
         callReg.addReceivedCall(t, number, answered);
+        if(answered) listAnswered(null);
+        else listRejected(null);
         return answered;
+    }
+
+    public void makeCall(ActionEvent actionEvent){
+        String number="";
+        while(number.length()!=9) {
+            number = JOptionPane.showInputDialog("Call", "number");
+            if(number==null) return;
+        }
+        new_CallRegFrame_num(number);
+        CallRegFrame destination=opened.get(number);
+        Time t=new Time();
+        boolean accepted= destination.receiveCall(t, callReg.getNumber());
+        if(!accepted){
+            callReg.addSentCall(t, number, new Duration());
+        }
+        else {
+            LiveCall liveCall = new LiveCall(callReg.getNumber(), number);
+            callReg.addSentCall(t, number, liveCall.waitForCallEnd());
+        }
+        listSent(null);
     }
 }

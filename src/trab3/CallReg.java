@@ -32,7 +32,9 @@ public class CallReg {
     }
 
     public String getNameFromNum(String number){
-        Iterator<Contact> list=noteBook.getContactsOf(number).iterator();
+        Iterable<Contact> iterable= noteBook.getContactsOf(number);
+        if(iterable==null) return null;
+        Iterator<Contact> list=iterable.iterator();
         Contact c=list.next();
         if(c==null || list.hasNext()) return null;
         return c.getName();
@@ -113,6 +115,6 @@ public class CallReg {
     }
 
     public void autoSave() throws IOException {
-        save(new File("dataFile\\"+number+".data"));
+        save(new File("dataFiles\\"+number+".data"));
     }
 }
