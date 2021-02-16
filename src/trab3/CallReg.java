@@ -15,8 +15,12 @@ public class CallReg {
     private Map<String, SentCall> sentCallMap=new HashMap<>();
     private NoteBook noteBook=new NoteBook();
 
-    public CallReg(String number) {
+    public CallReg(String number){
         this.number=number;
+        try{
+            load(new File("dataFiles\\"+number+".data"));
+        } catch (IOException | ClassNotFoundException ignored) {
+        }
     }
 
     public NoteBook getNoteBook() {
@@ -63,7 +67,6 @@ public class CallReg {
 
     public void save(File file) throws IOException {
         try(ObjectOutputStream objOut=new ObjectOutputStream(new FileOutputStream(file))) {
-            objOut.writeObject(number);
             objOut.writeObject(answeredCallMap);
             objOut.writeObject(rejectedCallMap);
             objOut.writeObject(sentCallMap);
@@ -73,7 +76,6 @@ public class CallReg {
 
     public void load(File file) throws IOException, ClassNotFoundException {
         try(ObjectInputStream objIn=new ObjectInputStream(new FileInputStream(file))){
-            number=(String) objIn.readObject();
             answeredCallMap= (Map<String, AnsweredCall>) objIn.readObject();
             rejectedCallMap= (Map<String, RejectedCall>) objIn.readObject();
             sentCallMap= (Map<String, SentCall>) objIn.readObject();
@@ -88,5 +90,9 @@ public class CallReg {
 
     public String toStringSentCallWithName(SentCall sentCall){
         return toStringReceivedCallWithName(sentCall)+" duration:"+sentCall.getDuration().toString();
+    }
+
+    public void autoSave() throws IOException {
+        save(new File("dataFile\\"+number+".data"));
     }
 }

@@ -10,11 +10,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
 import java.util.function.Function;
 
 
 public class CallRegFrame extends JFrame {
     private static final WL wl=new WL();
+    public static final Map<String, CallRegFrame> opened=new HashMap<>();
     private final JFileChooser fileChooser = new JFileChooser( );
     private final CallReg callReg;
     private final JTextArea listArea = new JTextArea( 15, 40 );
@@ -36,6 +38,10 @@ public class CallRegFrame extends JFrame {
             ++n;
         }
         public void windowClosed(WindowEvent arg0) {
+            Object obj=arg0.getSource();
+            if(obj instanceof CallRegFrame){
+                opened.remove(((CallRegFrame) obj).callReg.getNumber());
+            }
             if (--n <= 0) System.exit(0);
         }
     }
@@ -43,8 +49,8 @@ public class CallRegFrame extends JFrame {
     public ItensMenu[] fileMenus = {
             new ItensMenu("open", CallRegFrame::new_CallRegFrame),
             new ItensMenu("open contact list", this::open_notebook),
-            new ItensMenu("load", this::load),
-            new ItensMenu("save", this::save),
+            new ItensMenu("import", this::import_callReg),
+            new ItensMenu("export", this::export),
             new ItensMenu("exit", this::exit)
     };
 
@@ -57,7 +63,7 @@ public class CallRegFrame extends JFrame {
 
 
 
-    public CallRegFrame(String number) {
+    public CallRegFrame(String number) throws IOException, ClassNotFoundException {
         super(number);
         callReg = new CallReg(number);
 
@@ -82,16 +88,22 @@ public class CallRegFrame extends JFrame {
             number = JOptionPane.showInputDialog("Open Telephone", "number");
             if(number==null) return;
         }
-        CallRegFrame frame=new CallRegFrame(number);
-        frame.setVisible(true);
-        frame.addWindowListener(wl);
+        if(opened.containsKey(number)) return;
+        try {
+            CallRegFrame frame = new CallRegFrame(number);
+            frame.setVisible(true);
+            frame.addWindowListener(wl);
+            opened.put(number, frame);
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private void exit(ActionEvent actionEvent) {
         System.exit(0);
     }
 
-    private void save(ActionEvent actionEvent) {
+    private void export(ActionEvent actionEvent) {
         fileChooser.setCurrentDirectory(new File("."));
         if ( JFileChooser.APPROVE_OPTION == fileChooser.showSaveDialog(this) )
             try {
@@ -101,7 +113,7 @@ public class CallRegFrame extends JFrame {
             }
     }
 
-    private void load(ActionEvent actionEvent) {
+    private void import_callReg(ActionEvent actionEvent) {
         fileChooser.setCurrentDirectory(new File("."));
         if ( JFileChooser.APPROVE_OPTION == fileChooser.showOpenDialog(this) )
             try {
