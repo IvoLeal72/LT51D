@@ -45,7 +45,7 @@ public class Utils {
     /**
      * Num contentor associativo obter a coleção de chaves cujos valores associados
      * são os maiores segundo um determinado comparador.
-     * @param m contntor associativo
+     * @param m contentor associativo
      * @param cmp comparador
      * @return
      */

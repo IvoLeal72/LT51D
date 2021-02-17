@@ -1,7 +1,6 @@
 package trab2;
 
 import trab2.noteBook.gui.ContactDialog;
-import trab3.CallReg;
 import trab3.CallRegFrame;
 
 import javax.swing.*;
@@ -48,10 +47,6 @@ public class NoteBookFrame extends JFrame {
             new ItensMenu("this month birthdays", this::listMonthBirthdays)
     };
 
-    public CallRegFrame getMaster() {
-        return master;
-    }
-
     public ItensMenu[] withMoreMenus = {
             new ItensMenu("contacts with more phones", this::listMoreNumbers),
             new ItensMenu("phones with more contacts", this::listPhonesWithMoreContacts),
@@ -96,6 +91,10 @@ public class NoteBookFrame extends JFrame {
 
     public NoteBookFrame(){
         this("");
+    }
+
+    public CallRegFrame getMaster() {
+        return master;
     }
 
     /**

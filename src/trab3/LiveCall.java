@@ -3,8 +3,6 @@ package trab3;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.time.Instant;
 
 public class LiveCall{
@@ -14,16 +12,12 @@ public class LiveCall{
     public Instant start;
     private final LiveCallFrame lcf1, lcf2;
 
-    private class LiveCallFrame extends JFrame {
-        private final LiveCall liveCall;
-
-
-        public LiveCallFrame(String num1, String num2, LiveCall liveCall) {
+    private static class LiveCallFrame extends JFrame {
+        public LiveCallFrame(String num1, String num2, String name2, LiveCall liveCall) {
             super(num1);
-            this.liveCall=liveCall;
             setSize(300, 100);
             JTextField jTextField = new JTextField();
-            jTextField.setText("In call with " + num2);
+            jTextField.setText("In call with " + (name2!=null?name2:num2));
             setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
             jTextField.setVisible(true);
             add(jTextField, BorderLayout.CENTER);
@@ -37,12 +31,12 @@ public class LiveCall{
         }
     }
 
-    public LiveCall(String num1, String num2, CallRegFrame src, Time t){
+    public LiveCall(String num1, String num2, String name1, String name2, CallRegFrame src, Time t){
         this.src=src;
         this.t=t;
         destNum=num2;
-        lcf1=new LiveCallFrame(num1, num2, this);
-        lcf2=new LiveCallFrame(num2, num1, this);
+        lcf1= new LiveCallFrame(num1, num2, name2, this);
+        lcf2= new LiveCallFrame(num2, num1, name1, this);
         start=Instant.now();
     }
 

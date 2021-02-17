@@ -199,17 +199,11 @@ public class NoteBook implements Serializable{
      * mais aniversários
      */
 
-    public Collection<String> mostContactsByPhone(){
-        return Utils.greater(telephones, (s1, s2)->s1.size()-s2.size());
-    }
+    public Collection<String> mostContactsByPhone(){ return Utils.greater(telephones, (s1, s2)->s1.size()-s2.size()); }
 
-    public Collection<Date> mostBirthdays(){
-        return Utils.greater(birthdays, ((s1,s2)->s1.size()-s2.size()));
-    }
+    public Collection<Date> mostBirthdays(){ return Utils.greater(birthdays, ((s1,s2)->s1.size()-s2.size())); }
 
-    public Collection<String> mostNumbers(){
-        return Utils.greater(contacts, (c1,c2)->c1.getTelephones().size()-c2.getTelephones().size());
-    }
+    public Collection<String> mostNumbers(){ return Utils.greater(contacts, (c1,c2)->c1.getTelephones().size()-c2.getTelephones().size()); }
 
     public static void merge(File dir, String fileNameOut) throws IOException{
         File[] files=dir.listFiles();

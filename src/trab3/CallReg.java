@@ -9,7 +9,7 @@ import java.util.*;
 
 
 public class CallReg {
-    private String number;
+    private final String number;
     private Map<String, AnsweredCall> answeredCallMap=new HashMap<>();
     private Map<String, RejectedCall> rejectedCallMap=new HashMap<>();
     private Map<String, SentCall> sentCallMap=new HashMap<>();

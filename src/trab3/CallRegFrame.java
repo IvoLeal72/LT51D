@@ -246,7 +246,7 @@ public class CallRegFrame extends JFrame {
             listSent(null);
         }
         else {
-            new LiveCall(callReg.getNumber(), number, this, t);
+            new LiveCall(callReg.getNumber(), number, destination.getCallReg().getNameFromNum(callReg.getNumber()), callReg.getNameFromNum(number), this, t);
         }
     }
 
@@ -275,5 +275,9 @@ public class CallRegFrame extends JFrame {
                                 JOptionPane.QUESTION_MESSAGE, null, numList.toArray(), numList.iterator().next());
         }
         makeCall(number);
+    }
+
+    public static void main(String[] args) {
+        new_CallRegFrame();
     }
 }
