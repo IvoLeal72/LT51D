@@ -1,7 +1,6 @@
 package trab3;
 
 import trab2.Contact;
-import trab2.NoteBook;
 import trab2.NoteBookFrame;
 import trab2.NoteBookFrame.*;
 
@@ -71,6 +70,7 @@ public class CallRegFrame extends JFrame {
             new ItensMenu("open contact list", this::open_notebook),
             new ItensMenu("import", this::import_callReg),
             new ItensMenu("export", this::export),
+            new ItensMenu("clear", this::clear),
             new ItensMenu("exit", this::exit)
     };
 
@@ -206,13 +206,9 @@ public class CallRegFrame extends JFrame {
             @Override
             public void componentShown(ComponentEvent e) {
                 super.componentShown(e);
-                final Timer t = new Timer(timeout_ms, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        closedByTime[0] =true;
-                        dlg.setVisible(false);
-                    }
-
+                final Timer t = new Timer(timeout_ms, e1 -> {
+                    closedByTime[0] =true;
+                    dlg.setVisible(false);
                 });
                 t.start();
             }
@@ -220,11 +216,7 @@ public class CallRegFrame extends JFrame {
         dlg.setVisible(true);
 
         Object selectedValue = msg.getValue();
-        if (selectedValue.equals(JOptionPane.NO_OPTION) || closedByTime[0]) {
-            return false;
-        } else {
-            return true;
-        }
+        return !selectedValue.equals(JOptionPane.NO_OPTION) && !closedByTime[0];
     }
 
     public boolean receiveCall(Time t, String number) {
@@ -275,6 +267,11 @@ public class CallRegFrame extends JFrame {
                                 JOptionPane.QUESTION_MESSAGE, null, numList.toArray(), numList.iterator().next());
         }
         makeCall(number);
+    }
+
+    public void clear(ActionEvent actionEvent){
+        callReg.clear();
+        listAll(null);
     }
 
     public static void main(String[] args) {

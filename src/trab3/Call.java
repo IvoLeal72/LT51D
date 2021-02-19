@@ -27,6 +27,13 @@ public abstract class Call implements Comparable<Call>, Serializable{
         return number+" "+time.toString();
     }
 
+    public boolean equals(Object o){
+        if(o==null) return false;
+        if(!(o instanceof Call)) return false;
+        Call other=(Call)o;
+        return time.equals(other.time) && number.equals(other.number);
+    }
+
     public boolean merge(Call other){
         time=other.time;
         return true;

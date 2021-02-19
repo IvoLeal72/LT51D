@@ -15,8 +15,11 @@ public class CallReg {
     private Map<String, SentCall> sentCallMap=new HashMap<>();
     private NoteBook noteBook=new NoteBook();
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public CallReg(String number){
         this.number=number;
+        File dir=new File("dataFiles");
+        if(!dir.exists()) dir.mkdirs();
         try{
             load(new File("dataFiles\\"+number+".data"));
         } catch (IOException | ClassNotFoundException ignored) {
@@ -76,12 +79,18 @@ public class CallReg {
         }
     }
 
-    private final static Comparator<Call> callCmpDescendingTime=new Comparator<Call>() {
-        @Override
-        public int compare(Call o1, Call o2) {
-            return o2.getTime().compareTo(o1.getTime());
+    public void clear(){
+        answeredCallMap.clear();
+        rejectedCallMap.clear();
+        sentCallMap.clear();
+        noteBook.clear();
+        try {
+            autoSave();
+        } catch (IOException ignored) {
         }
-    };
+    }
+
+    private final static Comparator<Call> callCmpDescendingTime= (o1, o2) -> o2.getTime().compareTo(o1.getTime());
 
     public Iterable<AnsweredCall> getAnsweredCalls(){
         Iterable<AnsweredCall> iterable= answeredCallMap.values();
@@ -133,6 +142,8 @@ public class CallReg {
         }
     }
 
+
+    @SuppressWarnings("unchecked")
     public void load(File file) throws IOException, ClassNotFoundException {
         try(ObjectInputStream objIn=new ObjectInputStream(new FileInputStream(file))){
             answeredCallMap= (Map<String, AnsweredCall>) objIn.readObject();
